@@ -1,33 +1,31 @@
+package servidor;
+
 import processing.core.PApplet;
 
 public class Main extends PApplet {
-	
+	Comunicacion server;
 	private Logica log;
 
 	public static void main(String[] args) {
-		PApplet.main("Main");
-
+		PApplet.main("servidor.Main");
 	}
-	
+
+	@Override
 	public void settings() {
-		size(1200,700);
 		// TODO Auto-generated method stub
-
+		size(1200, 700);
 	}
-	
+
 	@Override
 	public void setup() {
 		log = new Logica(this);
-		// TODO Auto-generated method stub
-		
+		server = new Comunicacion(this);
+		server.start();
 	}
-	
+
 	@Override
 	public void draw() {
-		background(255);
 		// TODO Auto-generated method stub
-		
+		background(255);
 	}
-	
-
 }
