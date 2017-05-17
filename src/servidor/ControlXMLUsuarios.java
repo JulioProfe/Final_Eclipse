@@ -16,12 +16,12 @@ public class ControlXMLUsuarios {
 
 	public ControlXMLUsuarios(PApplet app) {
 		this.app = app;
-		File dato = new File("../data/BD_usuarios.xml");
+		File dato = new File("../Final_Eclipse/data/BD_usuarios.xml");
 		if (dato.exists()) {
-			usuarios = app.loadXML("../data/BD_usuarios.xml");
+			usuarios = app.loadXML("../Final_Eclipse/data/BD_usuarios.xml");
 		} else {
 			usuarios = app.parseXML("<usuarios></usuarios>");
-			app.saveXML(usuarios, "../data/BD_usuarios.xml");
+			app.saveXML(usuarios, "../Final_Eclipse/data/BD_usuarios.xml");
 			System.out.println("GUARDADO");
 		}
 	}
@@ -40,7 +40,7 @@ public class ControlXMLUsuarios {
 			XML hijo = usuarios.addChild("usuario");
 			hijo.setString("nombre", nombre);
 
-			app.saveXML(usuarios, "../data/BD_usuarios.xml");
+			app.saveXML(usuarios, "../Final_Eclipse/data/BD_usuarios.xml");
 			agregado = true;
 		}
 		return agregado;
