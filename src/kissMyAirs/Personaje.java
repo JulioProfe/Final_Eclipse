@@ -29,10 +29,10 @@ public class Personaje {
 		app.textAlign(PApplet.LEFT, PApplet.BOTTOM);
 
 		app.fill(130);
-		app.text(name.toUpperCase(), x + 93, y - 87, 150, 100);
+		app.text(name.toUpperCase(), x + 93, y - 87, 200, 100);
 
 		app.fill(255);
-		app.text(name.toUpperCase(), x + 90, y - 90, 150, 100);
+		app.text(name.toUpperCase(), x + 90, y - 90, 200, 100);
 	}
 
 	public void mover() {

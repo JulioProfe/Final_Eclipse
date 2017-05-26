@@ -55,12 +55,7 @@ public class ControlCliente extends Observable implements Runnable {
 		}
 	}
 
-	// private void recibirMensajes() throws IOException {
-	// DataInputStream dis = new DataInputStream(s.getInputStream());
-	// String mensaje = dis.readUTF();
-	// System.out.println("[ MENSAJE A RECIBIDO: " + mensaje + " ]");
-	// jefe.update(this, mensaje);
-	// }
+
 
 	public void recibirMensajes() throws IOException, ClassNotFoundException {
 		ObjectInputStream in = new ObjectInputStream(s.getInputStream());
@@ -77,15 +72,7 @@ public class ControlCliente extends Observable implements Runnable {
 		jefe.update(null, recibido);
 	}
 
-	// public void enviarMensaje(String mensaje) {
-	// try {
-	// DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-	// dos.writeUTF(mensaje);
-	// System.out.println("[ MENSAJE A ENVIADO: " + mensaje + " ]");
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
+
 
 	public void enviarMensaje(Object o) throws IOException {
 		ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
