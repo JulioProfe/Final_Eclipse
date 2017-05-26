@@ -1,9 +1,13 @@
 package kissMyAirs;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import ddf.minim.AudioPlayer;
+import ddf.minim.Minim;
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PImage;
 import serial.Iniciar;
 import serial.Posicion;
@@ -17,11 +21,20 @@ public class Logica implements Observer {
 	private PImage[] interfaz;
 	private PImage[] shoes;
 	private PImage pista;
+	private PImage beso;
+	private PImage ganar;
 	private String[] names;
 	private Boolean[] iniciar;
 	private int pantallas = 0;
 	private int desplazamiento = -3920;
 	private Personaje[] jugadores;
+	private Personaje ganador = null;
+	private PFont font;
+	
+	private Minim minim;
+	private AudioPlayer fondo;
+
+	private ArrayList<Beso> recolectables;
 
 	public Logica(PApplet app) {
 		// TODO Auto-generated constructor stub
@@ -29,14 +42,30 @@ public class Logica implements Observer {
 		server = new Comunicacion(app);
 		server.addObserver(this);
 		new Thread(server).start();
+		
+		minim = new Minim(app);
+		fondo = minim.loadFile("../data/Musica/fondo.mp3");
+		fondo.loop();
+		
+		font = app.createFont("../data/types/FUTURAEXTRABOLDITA.TTF", 32);
+		app.textFont(font);
+		recolectables = new ArrayList<Beso>();
 		names = new String[3];
 		jugadores = new Personaje[3];
 		iniciar = new Boolean[3];
 		cargarImgs();
+		iniciales();
 	}
 
 	public void ejecutar() {
+		sonidoFondo();
 		pantallas();
+	}
+	
+	public void sonidoFondo() {
+		if (fondo.position() == fondo.length()) {
+			fondo.rewind();
+		}
 	}
 
 	private void pantallas() {
@@ -73,13 +102,83 @@ public class Logica implements Observer {
 				desplazamiento = -3600;
 			}
 
-			for (int i = 0; i < jugadores.length; i++) {
-				// jugadores[i].mover();
-				jugadores[i].pintar();
-				jugadores[i].setY(app.height-200);
+			for (int j = 0; j < jugadores.length; j++) {
+				jugadores[j].pintar();
+				jugadores[j].pintarPuntaje();
+				jugadores[j].setY(app.height - 200);
+
+				if (jugadores[j].getPuntaje() >= 120) {
+					ganador = jugadores[j];
+					pantallas = 3;
+
+				}
+
+				for (int i = 0; i < recolectables.size(); i++) {
+					Beso tempB = (Beso) recolectables.get(i);
+
+					tempB.mover();
+					tempB.pintar();
+
+					if (tempB.getY() > app.height + 50) {
+						recolectables.remove(tempB);
+						int r = (int) app.random(0, 6);
+						addNew(r);
+					}
+
+					if (jugadores[j].validarPos(tempB.getX(), tempB.getY())) {
+						recolectables.remove(tempB);
+						jugadores[j].setPuntaje(10);
+						int r = (int) app.random(0, 6);
+						addNew(r);
+					}
+				}
+
 			}
 
-		default:
+
+
+
+		case 3:
+			if (ganador != null) {
+				app.image(ganar, 0, 0);
+				app.fill(255);
+				app.textSize(160);
+				app.textAlign(PApplet.CENTER, PApplet.CENTER);
+				app.text(ganador.getName().toUpperCase(), 735, 540);
+				app.noFill();
+			}
+			break;
+
+		}
+	}
+
+	private void addNew(int n) {
+
+		switch (n) {
+		case 0:
+			Beso tempBeso = new Beso(app, beso, 330, (int) app.random(-150, -90), (int) app.random(2, 8));
+			recolectables.add(tempBeso);
+			break;
+
+		case 1:
+			Beso tempBeso1 = new Beso(app, beso, 575, (int) app.random(-150, -90), (int) app.random(2, 8));
+			recolectables.add(tempBeso1);
+			break;
+		case 2:
+			Beso tempBeso2 = new Beso(app, beso, 830, (int) app.random(-150, -90), (int) app.random(2, 8));
+			recolectables.add(tempBeso2);
+			break;
+		case 3:
+			Beso tempBeso3 = new Beso(app, beso, 1070, (int) app.random(-150, -90), (int) app.random(2, 8));
+			recolectables.add(tempBeso3);
+			break;
+		case 4:
+			Beso tempBeso4 = new Beso(app, beso, 1330, (int) app.random(-150, -90), (int) app.random(2, 8));
+			recolectables.add(tempBeso4);
+			break;
+		case 5:
+			Beso tempBeso5 = new Beso(app, beso, 1590, (int) app.random(-150, -90), (int) app.random(2, 8));
+			recolectables.add(tempBeso5);
 			break;
 		}
 	}
@@ -88,7 +187,11 @@ public class Logica implements Observer {
 		interfaz = new PImage[2];
 		shoes = new PImage[3];
 		pista = new PImage();
+		beso = new PImage();
+		ganar = new PImage();
 
+		ganar = app.loadImage("../data/Interfaz/GANADOR.png");
+		beso = app.loadImage("../data/Interfaz/beso.png");
 		pista = app.loadImage("../data/Interfaz/pista.png");
 		interfaz[0] = app.loadImage("../data/Interfaz/INICIO.png");
 		interfaz[1] = app.loadImage("../data/Interfaz/PLAYERS.png");
@@ -97,6 +200,43 @@ public class Logica implements Observer {
 			shoes[i] = app.loadImage("../data/Shoes/shoe_" + (i + 1) + ".png");
 		}
 
+	}
+
+	public void iniciales() {
+		for (int i = 0; i < 6; i++) {
+			int temp = (int) app.random(0, 6);
+
+			switch (temp) {
+			case 0:
+				Beso tempBeso = new Beso(app, beso, 330, (int) app.random(-150, -90), (int) app.random(2, 8));
+				recolectables.add(tempBeso);
+				break;
+
+			case 1:
+				Beso tempBeso1 = new Beso(app, beso, 575, (int) app.random(-150, -90), (int) app.random(2, 8));
+				recolectables.add(tempBeso1);
+				break;
+			case 2:
+				Beso tempBeso2 = new Beso(app, beso, 830, (int) app.random(-150, -90), (int) app.random(2, 8));
+				recolectables.add(tempBeso2);
+				break;
+			case 3:
+				Beso tempBeso3 = new Beso(app, beso, 1070, (int) app.random(-150, -90), (int) app.random(2, 8));
+				recolectables.add(tempBeso3);
+				break;
+			case 4:
+				Beso tempBeso4 = new Beso(app, beso, 1330, (int) app.random(-150, -90), (int) app.random(2, 8));
+				recolectables.add(tempBeso4);
+				break;
+			case 5:
+				Beso tempBeso5 = new Beso(app, beso, 1590, (int) app.random(-150, -90), (int) app.random(2, 8));
+				recolectables.add(tempBeso5);
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 
 	@Override
