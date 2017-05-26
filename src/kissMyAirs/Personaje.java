@@ -8,7 +8,7 @@ public class Personaje {
 
 	private PApplet app;
 	private PImage imagen;
-	private int x, y, limite;
+	private int x, y, puntaje;
 	private String name;
 	private PFont font;
 
@@ -33,20 +33,29 @@ public class Personaje {
 
 		app.fill(255);
 		app.text(name.toUpperCase(), x + 90, y - 90, 200, 100);
+		
+		app.textAlign(PApplet.CENTER, PApplet.CENTER);
+	}
+	
+	public void pintarPuntaje(){
+		app.text(puntaje, x, 100);
 	}
 
-	public void mover() {
-		if (x < limite) {
-			x += 10;
-		} else if (x > limite) {
-			x -= 10;
-		} 
+	public boolean validarPos(int x, int y) {
+		if (app.dist(this.x, this.y, x, y) <80) {
+			return true;
+		} else
+			return false;
 	}
 	
 	
 
-	public void setLimite(int limite) {
-		this.limite = limite;
+	public int getPuntaje() {
+		return puntaje;
+	}
+
+	public void setPuntaje(int puntaje) {
+		this.puntaje += puntaje;
 	}
 
 	public int getX() {
