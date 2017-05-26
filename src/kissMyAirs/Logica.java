@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import serial.Iniciar;
 import serial.Posicion;
 import serial.Registrar;
 import serial.Select;
@@ -17,8 +18,8 @@ public class Logica implements Observer {
 	private PImage[] shoes;
 	private PImage pista;
 	private String[] names;
-	private boolean iniciar;
-	private int pantallas=0;
+	private Boolean[] iniciar;
+	private int pantallas = 0;
 	private int desplazamiento = -3920;
 	private Personaje[] jugadores;
 
@@ -30,6 +31,7 @@ public class Logica implements Observer {
 		new Thread(server).start();
 		names = new String[3];
 		jugadores = new Personaje[3];
+		iniciar = new Boolean[3];
 		cargarImgs();
 	}
 
@@ -55,6 +57,12 @@ public class Logica implements Observer {
 				jugadores[i].setY(app.height / 2);
 				jugadores[i].pintar();
 			}
+			if (iniciar[0] != null && iniciar[1] != null && iniciar[2] != null) {
+				if (iniciar[0] == true && iniciar[1] == true && iniciar[2] == true) {
+					pantallas = 2;
+				}
+			}
+
 			break;
 
 		case 2:
@@ -64,10 +72,11 @@ public class Logica implements Observer {
 			if (desplazamiento >= (-20)) {
 				desplazamiento = -3600;
 			}
-			
+
 			for (int i = 0; i < jugadores.length; i++) {
-				jugadores[i].mover();
+				// jugadores[i].mover();
 				jugadores[i].pintar();
+				jugadores[i].setY(app.height-200);
 			}
 
 		default:
@@ -92,10 +101,6 @@ public class Logica implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg instanceof Posicion) {
-			// MOVIMIENTO
-		}
-
 		if (arg instanceof Registrar) {
 			// NOMBRE DE USUARIO
 
@@ -142,25 +147,51 @@ public class Logica implements Observer {
 			}
 		}
 
+		if (arg instanceof Iniciar) {
+			Iniciar temp = (Iniciar) arg;
+
+			if (iniciar[0] == null) {
+				iniciar[0] = temp.isIniciar();
+				System.out.println("JUGADOR " + temp.getName() + "ESTÁ LISTO PARA JUGAR");
+			}
+
+			else if (iniciar[1] == null) {
+				iniciar[1] = temp.isIniciar();
+				System.out.println("JUGADOR " + temp.getName() + "ESTÁ LISTO PARA JUGAR");
+
+			}
+
+			else if (iniciar[2] == null) {
+				iniciar[2] = temp.isIniciar();
+				System.out.println("JUGADOR " + temp.getName() + "ESTÁ LISTO PARA JUGAR");
+
+			}
+		}
+
 		if (arg instanceof Posicion) {
 			Posicion temp = (Posicion) arg;
 
-			if (jugadores[0].getName() == temp.getName()) {
+			if (jugadores[0].getName().contains(temp.getName())) {
 				double x = app.map((float) temp.getPos(), 9, -9, 330, 575);
-				jugadores[0].setLimite((int)x);
-				System.out.println("El jugador # " + temp.getName() + " está en: " + x);
-			}
+				// jugadores[0].setLimite((int) x);
+				jugadores[0].setX((int) x);
 
-			if (jugadores[1].getName() == temp.getName()) {
+				System.out.println("El jugador # " + temp.getName() + " está en: " + x);
+			} else
+
+			if (jugadores[1].getName().contains(temp.getName())) {
 				double x = app.map((float) temp.getPos(), 9, -9, 830, 1070);
-				jugadores[1].setLimite((int)x);
+				// jugadores[1].setLimite((int) x);
+				jugadores[1].setX((int) x);
 
 				System.out.println("El jugador # " + temp.getName() + " está en: " + x);
-			}
+			} else
 
-			if (jugadores[2].getName() == temp.getName()) {
+			if (jugadores[2].getName().contains(temp.getName())) {
 				double x = app.map((float) temp.getPos(), 9, -9, 1330, 1590);
-				jugadores[2].setLimite((int)x);
+				// jugadores[2].setLimite((int) x);
+				jugadores[2].setX((int) x);
+
 				System.out.println("El jugador # " + temp.getName() + " está en: " + x);
 			}
 
