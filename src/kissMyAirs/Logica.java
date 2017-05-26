@@ -18,7 +18,7 @@ public class Logica implements Observer {
 	private PImage pista;
 	private String[] names;
 	private boolean iniciar;
-	private int pantallas = 2;
+	private int pantallas=0;
 	private int desplazamiento = -3920;
 	private Personaje[] jugadores;
 
