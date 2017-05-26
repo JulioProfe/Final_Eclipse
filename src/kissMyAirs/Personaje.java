@@ -26,9 +26,14 @@ public class Personaje {
 		app.image(imagen, x, y);
 		app.imageMode(PApplet.CORNER);
 		
-		app.fill(205,69,83);
-		app.textAlign(PApplet.CENTER,PApplet.CENTER);
-		app.text(name, x+100, y-100);
+		app.textSize(60);
+		app.textAlign(PApplet.LEFT,PApplet.BOTTOM);
+		
+		app.fill(130);
+		app.text(name.toUpperCase(), x+93, y-87);
+		
+		app.fill(255);
+		app.text(name.toUpperCase(), x+90, y-90);
 	}
 
 	public int getX() {

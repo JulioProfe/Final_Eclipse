@@ -16,6 +16,7 @@ public class Logica implements Observer {
 	private PImage[] interfaz;
 	private PImage[] shoes;
 	private String[] names;
+	private boolean iniciar;
 	private int pantallas;
 	private Personaje[] jugadores;
 
@@ -46,7 +47,8 @@ public class Logica implements Observer {
 		case 1:
 			app.image(interfaz[1], 0, 0);
 			for (int i = 0; i < jugadores.length; i++) {
-				jugadores[i].setX((app.width/3 +100) *i);
+				jugadores[i].setX((app.width/4*i)+app.width/5);
+				jugadores[i].setY(app.height/2);
 				jugadores[i].pintar();
 			}
 			break;
