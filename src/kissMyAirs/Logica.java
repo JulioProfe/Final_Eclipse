@@ -15,9 +15,11 @@ public class Logica implements Observer {
 	private PApplet app;
 	private PImage[] interfaz;
 	private PImage[] shoes;
+	private PImage pista;
 	private String[] names;
 	private boolean iniciar;
-	private int pantallas;
+	private int pantallas = 2;
+	private int desplazamiento = -3920;
 	private Personaje[] jugadores;
 
 	public Logica(PApplet app) {
@@ -39,19 +41,34 @@ public class Logica implements Observer {
 		switch (pantallas) {
 		case 0:
 			app.image(interfaz[0], 0, 0);
-			if (jugadores[0]!=null && jugadores[1]!=null && jugadores[2]!=null) {
-				pantallas=1;
+			if (jugadores[0] != null && jugadores[1] != null && jugadores[2] != null) {
+				pantallas = 1;
 			}
 			break;
 
 		case 1:
 			app.image(interfaz[1], 0, 0);
 			for (int i = 0; i < jugadores.length; i++) {
-				jugadores[i].setX((app.width/4*i)+app.width/5);
-				jugadores[i].setY(app.height/2);
+				app.rectMode(PApplet.CENTER);
+				app.rect(jugadores[i].getX(), jugadores[i].getY(), 280, 280);
+				jugadores[i].setX((app.width / 4 * i) + app.width / 5);
+				jugadores[i].setY(app.height / 2);
 				jugadores[i].pintar();
 			}
 			break;
+
+		case 2:
+
+			app.image(pista, 0, desplazamiento);
+			desplazamiento += 3;
+			if (desplazamiento >= (-20)) {
+				desplazamiento = -3600;
+			}
+			
+			for (int i = 0; i < jugadores.length; i++) {
+				jugadores[i].mover();
+				jugadores[i].pintar();
+			}
 
 		default:
 			break;
@@ -61,12 +78,14 @@ public class Logica implements Observer {
 	private void cargarImgs() {
 		interfaz = new PImage[2];
 		shoes = new PImage[3];
+		pista = new PImage();
 
+		pista = app.loadImage("../data/Interfaz/pista.png");
 		interfaz[0] = app.loadImage("../data/Interfaz/INICIO.png");
 		interfaz[1] = app.loadImage("../data/Interfaz/PLAYERS.png");
-		
+
 		for (int i = 0; i < shoes.length; i++) {
-			shoes[i] = app.loadImage("../data/Shoes/shoe_"+(i+1)+".png");
+			shoes[i] = app.loadImage("../data/Shoes/shoe_" + (i + 1) + ".png");
 		}
 
 	}
@@ -116,10 +135,33 @@ public class Logica implements Observer {
 							jugadores[2] = new Personaje(app, shoes[temp.getShoe()], temp.getName());
 							System.out.println("Jugador 3 se llama " + names[2]);
 						}
-						System.out.println("El jugador llamado " + temp.getName() + " escogió los zapatos # "
-								+ temp.getShoe());
+						System.out.println(
+								"El jugador llamado " + temp.getName() + " escogió los zapatos # " + temp.getShoe());
 					}
 				}
+			}
+		}
+
+		if (arg instanceof Posicion) {
+			Posicion temp = (Posicion) arg;
+
+			if (jugadores[0].getName() == temp.getName()) {
+				double x = app.map((float) temp.getPos(), 9, -9, 330, 575);
+				jugadores[0].setLimite((int)x);
+				System.out.println("El jugador # " + temp.getName() + " está en: " + x);
+			}
+
+			if (jugadores[1].getName() == temp.getName()) {
+				double x = app.map((float) temp.getPos(), 9, -9, 830, 1070);
+				jugadores[1].setLimite((int)x);
+
+				System.out.println("El jugador # " + temp.getName() + " está en: " + x);
+			}
+
+			if (jugadores[2].getName() == temp.getName()) {
+				double x = app.map((float) temp.getPos(), 9, -9, 1330, 1590);
+				jugadores[2].setLimite((int)x);
+				System.out.println("El jugador # " + temp.getName() + " está en: " + x);
 			}
 
 		}
