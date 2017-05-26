@@ -10,7 +10,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 import processing.core.PApplet;
-public class Comunicacion extends Thread implements Observer {
+import serial.Registrar;
+
+public class Comunicacion extends Observable implements Observer, Runnable {
 
 	private ServerSocket ss;
 	private ArrayList<ControlCliente> clientes;
@@ -36,7 +38,7 @@ public class Comunicacion extends Thread implements Observer {
 				clientes.add(new ControlCliente(ss.accept(), this));
 				System.out.println("[ NUEVO CLIENTE ES: " + clientes.get(clientes.size() - 1).toString() + " ]");
 				System.out.println("[ CANTIDAD DE CLIENTES: " + clientes.size() + " ]");
-				sleep(100);
+				Thread.sleep(100);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -46,16 +48,22 @@ public class Comunicacion extends Thread implements Observer {
 	}
 
 	@Override
-	public void update(Observable observado, Object mensajeString) {
-		String notificacion = (String) mensajeString;
-		if (notificacion.contains("signup_req:")) {
-			String[] partes = notificacion.split(":");
-			boolean resultadoAgregar = cxmlUsuarios.agregarUsuario(partes[1]);
-			((ControlCliente) observado).enviarMensaje("signup_resp:" + (resultadoAgregar == true ? 1 : 0));
+	public void update(Observable observado, Object obj) {
+		if (obj instanceof Registrar) {
+			Registrar notificacion = (Registrar) obj;
+			String name= notificacion.getName();
+
+			if (name.contains("cliente_no_disponible")) {
+				clientes.remove(observado);
+				System.out.println("[ SE HA IDO UN CLIENTE, QUEDAN: " + clientes.size() + " ]");
+			}
 		}
-		if (notificacion.contains("cliente_no_disponible")) {
-			clientes.remove(observado);
-			System.out.println("[ SE HA IDO UN CLIENTE, QUEDAN: " + clientes.size() + " ]");
-		}
+		
+		setChanged();
+		notifyObservers(obj);
+		clearChanged();
+		
+		
+		
 	}
 }
